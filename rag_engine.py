@@ -79,33 +79,54 @@ class RAGEngine:
             logger.error(f"Error building index: {e}")
             raise
     
+    def _handle_off_topic_query(self, question: str) -> str:
+        """
+        Handle off-topic queries by providing a fallback response or fetching information from an external source.
+
+        Args:
+            question (str): The off-topic question to handle.
+
+        Returns:
+            str: A response for the off-topic query.
+        """
+        # Placeholder for external API integration (e.g., Wikipedia API)
+        logger.info(f"Handling off-topic query: {question[:50]}...")
+        return "This question is outside the scope of cybersecurity. Please consult a general knowledge source."
+
     def query(self, question: str) -> str:
         """
         Query the RAG system with a question.
-        
+
         Args:
             question (str): The question to ask
-            
+
         Returns:
-            str: The retrieved context from documents
+            str: The retrieved context from documents or a fallback response for off-topic queries.
         """
         if not self.query_engine:
             raise RuntimeError("Query engine not initialized. Call _load_documents() first.")
-        
+
         try:
             logger.info(f"Processing query: {question[:50]}...")
+
+            # Classify the query
+            classification = self._classify_query(question)
+            if classification == 'off-topic':
+                return self._handle_off_topic_query(question)
+
+            # Process in-scope query
             response = self.query_engine.query(question)
-            
+
             # Get the response content
             context = response.response if hasattr(response, 'response') else str(response)
-            
+
             # Check if the response indicates no relevant information was found
             if self._is_low_relevance_response(context):
                 logger.info("Low relevance response detected")
                 return "No relevant cybersecurity information found in documents."
-            
+
             return context
-            
+
         except Exception as e:
             logger.error(f"Error processing query: {e}")
             return f"Error retrieving information: {e}"
@@ -154,6 +175,28 @@ class RAGEngine:
             return True
         
         return False
+    
+    def _classify_query(self, question: str) -> str:
+        """
+        Classify the query to determine if it is within the scope of the vector database or off-topic.
+
+        Args:
+            question (str): The question to classify.
+
+        Returns:
+            str: 'in-scope' if the query is relevant to the vector database, 'off-topic' otherwise.
+        """
+        # Simple keyword-based classification for demonstration purposes
+        cybersecurity_keywords = [
+            "security", "vulnerability", "attack", "malware", "encryption",
+            "authentication", "authorization", "firewall", "intrusion",
+            "threat", "risk", "exploit", "penetration", "network", "cyber"
+        ]
+
+        question_lower = question.lower()
+        if any(keyword in question_lower for keyword in cybersecurity_keywords):
+            return 'in-scope'
+        return 'off-topic'
     
     def get_index_info(self) -> dict:
         """
