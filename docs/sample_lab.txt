@@ -1,0 +1,11 @@
+Cybersecurity Lab Example: SQL Injection
+
+Lab Objective: Demonstrate how SQL injection vulnerabilities can be exploited and how to mitigate them.
+
+Steps:
+1. Identify input fields vulnerable to SQL injection.
+2. Attempt to inject SQL commands (e.g., ' OR 1=1 --).
+3. Observe unauthorized data access.
+4. Apply parameterized queries to fix the vulnerability.
+
+Key Takeaway: Always validate and sanitize user input and use parameterized queries to prevent SQL injection.

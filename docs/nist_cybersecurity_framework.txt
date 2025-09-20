@@ -1,0 +1,11 @@
+NIST Cybersecurity Framework (Summary)
+
+The NIST Cybersecurity Framework provides a policy framework of computer security guidance for how private sector organizations can assess and improve their ability to prevent, detect, and respond to cyber attacks. The core functions are:
+
+1. Identify
+2. Protect
+3. Detect
+4. Respond
+5. Recover
+
+Each function is divided into categories and subcategories of cybersecurity outcomes and security controls.
