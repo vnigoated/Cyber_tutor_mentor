@@ -1,6 +1,11 @@
 llama-index
-langchain
-openai
+llama-index-embeddings-huggingface
+python-dotenv
 groq
+gradio
 requests
 tqdm
+torch
+transformers
+sentence-transformers
+numpy<2
