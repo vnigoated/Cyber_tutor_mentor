@@ -7,6 +7,10 @@ from typing import List, Dict
 from config import Config
 from conversation_manager import get_conversation_manager
 import logging
+import json
+import re
+import time
+from typing import Optional, Any
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -229,3 +233,79 @@ def log_user_activity(user_level: str, message: str, response_length: int):
         f"Message length: {len(message)}, "
         f"Response length: {response_length}"
     )
+
+# Add robust JSON parsing helper
+
+def parse_json_from_model(text: str, max_attempts: int = 3, delay: float = 0.5) -> Optional[Any]:
+    """Try to extract and parse JSON from model text.
+
+    Returns parsed JSON (dict/list) or None.
+    """
+    if text is None:
+        return None
+
+    candidate = text.strip()
+    if not candidate:
+        return None
+
+    # Remove leading/trailing triple-backtick fences
+    candidate = re.sub(r"^```(?:json)?\s*|\s*```$", "", candidate, flags=re.I)
+
+    for attempt in range(max_attempts):
+        try:
+            return json.loads(candidate)
+        except Exception:
+            # Search for JSON array or object substring
+            jmatch = re.search(r"(\[\s*\{[\s\S]*?\}\s*\])", candidate, flags=re.S)
+            if jmatch:
+                try:
+                    return json.loads(jmatch.group(1))
+                except Exception:
+                    pass
+
+            omatch = re.search(r"(\{[\s\S]*?\})", candidate, flags=re.S)
+            if omatch:
+                try:
+                    return json.loads(omatch.group(1))
+                except Exception:
+                    pass
+
+        time.sleep(delay)
+
+    return None
+
+def grade_quiz_struct(quiz: list, answers: list) -> dict:
+    """Grade a quiz given the canonical quiz structure and a list of answers.
+
+    quiz: list of question dicts with keys: question, options, answer, explanation
+    answers: list of answers as letters or labeled strings (e.g., 'A' or 'A. option text')
+
+    Returns a dict with score and per-question results.
+    """
+    results = []
+    score = 0
+    for i, q in enumerate(quiz):
+        user = answers[i] if i < len(answers) else None
+        sel = ''
+        if isinstance(user, str) and user.strip():
+            sel = user.strip()[0].upper()
+        correct = (q.get('answer') or '').strip().upper()
+        options = q.get('options', [])
+        is_correct = (sel == correct and sel != '')
+        if is_correct:
+            score += 1
+        correct_text = ''
+        if correct and options:
+            try:
+                correct_text = options[ord(correct)-65]
+            except Exception:
+                correct_text = ''
+        results.append({
+            'question': q.get('question',''),
+            'selected': sel,
+            'correct': correct,
+            'is_correct': is_correct,
+            'correct_text': correct_text,
+            'explanation': q.get('explanation','')
+        })
+    return {'score': score, 'total': len(quiz), 'details': results}

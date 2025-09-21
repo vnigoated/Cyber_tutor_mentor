@@ -1,4 +1,114 @@
-.env
-.vscode/
-venv
+
+.venv/
+venv/
 __pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+env/
+ENV/
+build/
+dist/
+.eggs/
+*.egg-info/
+.python-version
+.pytest_cache/
+.cache/
+coverage.xml
+htmlcov/
+pip-wheel-metadata/
+.idea/
+.vscode/
+.DS_Store
+*.sqlite3
+*.log
+*.pot
+*.mo
+.env
+.env.*
+secrets.json
+credentials.json
+
+# JetBrains
+*.iml
+
+# OS generated
+Thumbs.db
+Desktop.ini
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Virtual environment folders
+ENV/
+env/
+venv/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+dist/
+.eggs/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer packages
+*.msi
+*.exe
+*.dll
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+
+# Translations
+*.mo
+*.pot
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# VS Code settings
+.vscode/
+
+# Local env files
+.env
+
+# Secrets
+secrets.yml
+
+# End of file
